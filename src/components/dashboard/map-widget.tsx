@@ -46,7 +46,7 @@ export default function MapWidget() {
       <CardContent className="flex-grow rounded-lg overflow-hidden">
         {apiKey ? (
           <APIProvider apiKey={apiKey}>
-            <div className="h-[500px] w-full rounded-lg">
+            <div className="h-full min-h-[250px] w-full rounded-lg">
               <Map
                 center={position}
                 zoom={15}
@@ -63,7 +63,7 @@ export default function MapWidget() {
             </div>
           </APIProvider>
         ) : (
-          <div className="h-[500px] w-full flex flex-col items-center justify-center bg-muted rounded-lg">
+          <div className="h-full min-h-[250px] w-full flex flex-col items-center justify-center bg-muted rounded-lg">
             <WifiOff className="h-12 w-12 text-muted-foreground mb-4" />
             <p className="text-muted-foreground font-semibold">Map Unavailable</p>
             <p className="text-muted-foreground text-sm text-center max-w-xs mt-1">

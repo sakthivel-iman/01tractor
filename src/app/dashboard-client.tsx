@@ -8,6 +8,9 @@ import WheelSlipCard from "@/components/dashboard/wheel-slip-card";
 import WorkingHoursChart from "@/components/dashboard/working-hours-chart";
 import MapWidget from "@/components/dashboard/map-widget";
 import { Skeleton } from "@/components/ui/skeleton";
+import CameraFeed from "@/components/dashboard/camera-feed";
+import GpsInfo from "@/components/dashboard/gps-info";
+import NetworkSignal from "@/components/dashboard/network-signal";
 
 export default function DashboardClient() {
   const router = useRouter();
@@ -51,13 +54,21 @@ export default function DashboardClient() {
               <Speedometer />
               <WorkingHoursChart />
             </div>
-            <div className="grid gap-6 md:grid-cols-2">
+             <div className="grid gap-6 md:grid-cols-2">
+                <CameraFeed />
+                <MapWidget />
+             </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               <WheelSlipCard wheel="Rear LH" />
               <WheelSlipCard wheel="Rear RH" />
+              <GpsInfo />
+              <NetworkSignal />
             </div>
           </div>
           <div className="xl:col-span-1">
-            <MapWidget />
+            <div className="space-y-6">
+              {/* Other widgets can go here */}
+            </div>
           </div>
         </div>
       </main>
