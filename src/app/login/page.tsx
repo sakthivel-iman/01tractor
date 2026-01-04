@@ -42,6 +42,8 @@ const formSchema = z.object({
     .min(8, { message: "Password must be at least 8 characters." }),
 });
 
+type AuthAction = "signin" | "signup";
+
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
@@ -63,46 +65,34 @@ export default function LoginPage() {
     }
   }, [user, isUserLoading, router]);
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const handleAuthAction = async (
+    action: AuthAction,
+    values: z.infer<typeof formSchema>
+  ) => {
     setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
-      toast({
-        title: "Login Successful",
-        description: "Redirecting to your dashboard...",
-      });
-      router.push("/");
-    } catch (error) {
-      if (error instanceof FirebaseError && error.code === "auth/user-not-found") {
-        try {
-          await createUserWithEmailAndPassword(auth, values.email, values.password);
-          toast({
-            title: "Account Created",
-            description: "New account created successfully. Logging you in...",
-          });
-          router.push("/");
-        } catch (creationError) {
-          console.error("Account creation failed", creationError);
-          toast({
-            variant: "destructive",
-            title: "Registration Failed",
-            description:
-              creationError instanceof FirebaseError
-                ? creationError.message
-                : "An unexpected error occurred.",
-          });
-        }
-      } else {
-        console.error("Login failed", error);
+      if (action === "signup") {
+        await createUserWithEmailAndPassword(auth, values.email, values.password);
         toast({
-          variant: "destructive",
-          title: "Login Failed",
-          description:
-            error instanceof FirebaseError
-              ? error.message
-              : "Invalid credentials. Please try again.",
+          title: "Account Created",
+          description: "New account created successfully. Logging you in...",
+        });
+      } else {
+        await signInWithEmailAndPassword(auth, values.email, values.password);
+        toast({
+          title: "Login Successful",
+          description: "Redirecting to your dashboard...",
         });
       }
+      router.push("/");
+    } catch (error) {
+      const firebaseError = error as FirebaseError;
+      console.error(`${action} failed`, firebaseError);
+      toast({
+        variant: "destructive",
+        title: `${action === "signup" ? "Registration" : "Login"} Failed`,
+        description: firebaseError.message || "An unexpected error occurred.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -111,13 +101,13 @@ export default function LoginPage() {
   const tractorImage = PlaceHolderImages.find(
     (p) => p.id === "tafe-7515-tractor"
   );
-  
+
   if (isUserLoading || user) {
     return (
-       <div className="h-screen w-screen flex justify-center items-center">
-         <TractorIcon className="w-24 h-24 animate-pulse text-primary" />
-       </div>
-    )
+      <div className="h-screen w-screen flex justify-center items-center">
+        <TractorIcon className="w-24 h-24 animate-pulse text-primary" />
+      </div>
+    );
   }
 
   return (
@@ -149,7 +139,7 @@ export default function LoginPage() {
           <CardContent>
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={(e) => e.preventDefault()}
                 className="space-y-4"
               >
                 <FormField
@@ -187,21 +177,31 @@ export default function LoginPage() {
                     </FormItem>
                   )}
                 />
-                <Button
-                  type="submit"
-                  className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Signing In..." : "Sign In"}
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-2">
+                    <Button
+                    onClick={form.handleSubmit((values) => handleAuthAction("signin", values))}
+                    className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
+                    disabled={isLoading}
+                    >
+                    {isLoading ? "Signing In..." : "Sign In"}
+                    </Button>
+                    <Button
+                    onClick={form.handleSubmit((values) => handleAuthAction("signup", values))}
+                    variant="outline"
+                    className="w-full"
+                    disabled={isLoading}
+                    >
+                    {isLoading ? "Working..." : "Sign Up"}
+                    </Button>
+                </div>
               </form>
             </Form>
           </CardContent>
-           <CardFooter>
-             <p className="text-center text-xs text-muted-foreground w-full">
-              If you don't have an account, one will be created for you.
-             </p>
-           </CardFooter>
+          <CardFooter>
+            <p className="text-center text-xs text-muted-foreground w-full">
+              Sign in or create a new account to continue.
+            </p>
+          </CardFooter>
         </Card>
       </div>
     </main>
