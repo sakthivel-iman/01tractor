@@ -16,7 +16,7 @@ export function useTractorData() {
       orderBy('timestamp', 'desc'),
       limit(1)
     );
-  }, [user, firestore]);
+  }, [user?.uid, firestore]);
 
   const { data: telemetryData, isLoading } = useCollection<TractorTelemetry>(telemetryQuery);
 
