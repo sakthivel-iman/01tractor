@@ -90,10 +90,6 @@ export default function ProfilePage() {
                     <Label htmlFor="phone"><Phone className="inline-block mr-2 h-4 w-4" />Phone No</Label>
                     <Input id="phone" defaultValue="+1 234 567 890" readOnly={!isEditing} />
                   </div>
-                  <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="address"><Home className="inline-block mr-2 h-4 w-4" />Address</Label>
-                    <Input id="address" defaultValue="123 Tractor Lane, Farmville, AG 54321" readOnly={!isEditing} />
-                  </div>
                 </CardContent>
               </Card>
 
@@ -125,6 +121,10 @@ export default function ProfilePage() {
                         <div className="space-y-2">
                             <Label htmlFor="yom"><Calendar className="inline-block mr-2 h-4 w-4" />Year of Registration</Label>
                             <Input id="yom" defaultValue="2023" type="number" readOnly={!isEditing} />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                            <Label htmlFor="address"><Home className="inline-block mr-2 h-4 w-4" />Address</Label>
+                            <Input id="address" defaultValue="123 Tractor Lane, Farmville, AG 54321" readOnly={!isEditing} />
                         </div>
                     </div>
                      <div className="space-y-2">
