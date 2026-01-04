@@ -131,7 +131,7 @@ export default function LoginPage() {
       <div className="relative z-10 flex h-full items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-2xl bg-card/80 backdrop-blur-lg">
           <CardHeader className="text-center items-center pt-8">
-            <TractorIcon className="w-16 h-16 mb-4" />
+            <TractorIcon className="w-16 h-16 mb-4 text-primary" />
             <CardTitle className="font-headline text-3xl">
               Tractor Status
             </CardTitle>

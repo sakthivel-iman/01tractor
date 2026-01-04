@@ -4,45 +4,10 @@ export const TractorIcon = (props: SVGProps<SVGSVGElement>) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
-        width="24"
-        height="24"
-        fill="none"
+        fill="currentColor"
         {...props}
     >
-        <defs>
-            <linearGradient id="icon-gradient" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#FF8C00" /> 
-                <stop offset="100%" stopColor="#FF0080" /> 
-            </linearGradient>
-        </defs>
-        <g stroke="url(#icon-gradient)" strokeWidth="1.5">
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 4.5h9.75l1.5 5.25"
-            />
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M14.25 5.25h1.5"
-            />
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13.5 19.5H3.75a1.5 1.5 0 0 1-1.5-1.5V6a1.5 1.5 0 0 1 1.5-1.5h11.25"
-            />
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 12.75h-5.25"
-            />
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M18 19.5v-3.75"
-            />
-            <circle cx="6.75" cy="15.75" r="3" />
-            <circle cx="18" cy="15.75" r="3" />
-        </g>
+        <path d="M21.5 13.5c-.827 0-1.5.673-1.5 1.5s.673 1.5 1.5 1.5S23 15.827 23 15s-.673-1.5-1.5-1.5zm-11 0c-.827 0-1.5.673-1.5 1.5s.673 1.5 1.5 1.5 1.5-.673 1.5-1.5-.673-1.5-1.5-1.5z"/>
+        <path d="M18.82 11h-1.451a4.018 4.018 0 0 0-3.693-2.522l.935-3.74C14.771 4.107 14.22 3.5 13.585 3.5H9.722c-1.353 0-2.52 1.042-2.628 2.388L6.44 14.5H4.5c-1.103 0-2 .897-2 2v.5c0 .276.224.5.5.5h1.34c.14-.84.887-1.5 1.76-1.5.827 0 1.5.673 1.5 1.5s-.673 1.5-1.5 1.5c-.873 0-1.62-.66-1.76-1.5H2.5c-.276 0-.5-.224-.5-.5v-.5c0-1.654 1.346-3 3-3h2.181L8.358 6.132A.626.626 0 0 1 8.973 5.75h4.612a.625.625 0 0 1 .586.438l-.935 3.74A4.018 4.018 0 0 0 17.369 13h1.451c.365 0 .681.209.845.526l2.162 4.129c.148.283.189.605.111.912-.078.307-.27.575-.544.757l-1.378.918c-.287.192-.644.228-.962.093l-2.47-1.059c-.273-.117-.457-.384-.457-.68v-4.13c0-.276-.224-.5-.5-.5h-2.5c-.276 0-.5.224-.5.5v4.13c0 .825.509 1.558 1.258 1.882l2.47 1.059c.783.336 1.673.189 2.33-.394l1.378-.918c.706-.47 1.139-1.248 1.25-2.09.111-.842-.178-1.684-.799-2.27l-2.162-4.129A1.493 1.493 0 0 0 18.82 11z"/>
     </svg>
 );
