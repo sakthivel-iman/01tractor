@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -51,8 +52,8 @@ export default function LoginPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "admin@tractor.com",
+      password: "password123",
     },
   });
 
