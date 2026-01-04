@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -129,10 +130,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-background/80 backdrop-blur-md" />
       <div className="relative z-10 flex h-full items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-2xl bg-card/80 backdrop-blur-lg">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
-              <TractorIcon className="h-8 w-8" />
-            </div>
+          <CardHeader className="text-center pt-8">
             <CardTitle className="font-headline text-3xl">
               Tractor Status
             </CardTitle>
