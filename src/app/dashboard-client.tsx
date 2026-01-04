@@ -15,7 +15,6 @@ import NetworkSignal from "@/components/dashboard/network-signal";
 import { useUser } from "@/firebase";
 import { useTractorData } from "@/hooks/use-tractor-data";
 import { TractorIcon } from "@/components/icons";
-import { Card, CardContent } from "@/components/ui/card";
 
 export default function DashboardClient() {
   const router = useRouter();
@@ -38,12 +37,25 @@ export default function DashboardClient() {
 
   const renderSkeleton = () => (
     <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {/* Skeletons for the new layout */}
-      <Skeleton className="h-48 lg:col-span-1 xl:col-span-1" />
-      <Skeleton className="h-96 lg:col-span-2 xl:col-span-2" />
-      <Skeleton className="h-64 lg:col-span-1 xl:col-span-1" />
-      <Skeleton className="h-64 lg:col-span-1 xl:col-span-1" />
-      <Skeleton className="h-64 lg:col-span-1 xl:col-span-1" />
+      {/* Column 1: Wheel Slips */}
+      <div className="lg:col-span-1 xl:col-span-1 flex flex-col gap-6">
+          <Skeleton className="h-28" />
+          <Skeleton className="h-28" />
+      </div>
+      
+      {/* Column 2: Camera and Map */}
+      <div className="lg:col-span-2 xl:col-span-2 grid grid-cols-1 gap-6">
+         <Skeleton className="h-64" />
+         <Skeleton className="h-80" />
+      </div>
+
+      {/* Column 3: Other Info */}
+      <div className="lg:col-span-3 xl:col-span-1 flex flex-col gap-6">
+         <Skeleton className="h-64" />
+         <Skeleton className="h-64" />
+         <Skeleton className="h-24" />
+         <Skeleton className="h-24" />
+      </div>
     </div>
   );
 
