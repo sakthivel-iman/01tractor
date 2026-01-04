@@ -13,26 +13,23 @@ import {
 import { useEffect, useState } from "react";
 import { TractorIcon } from "../icons";
 
-export default function MapWidget() {
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+type MapWidgetProps = {
+    position: { lat: number, lng: number } | null;
+}
 
-  const [position, setPosition] = useState({ lat: 28.6139, lng: 77.2090 }); // Delhi, India
+export default function MapWidget({ position }: MapWidgetProps) {
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    const interval = setInterval(() => {
-        setPosition(prev => ({
-            lat: prev.lat + (Math.random() - 0.5) * 0.001,
-            lng: prev.lng + (Math.random() - 0.5) * 0.001,
-        }));
-    }, 5000);
-    return () => clearInterval(interval);
   }, []);
 
   if (!isClient) {
     return null;
   }
+  
+  const center = position || { lat: 28.6139, lng: 77.2090 };
 
   return (
     <Card className="h-full flex flex-col">
@@ -48,17 +45,19 @@ export default function MapWidget() {
           <APIProvider apiKey={apiKey}>
             <div className="h-full min-h-[250px] w-full rounded-lg">
               <Map
-                center={position}
+                center={center}
                 zoom={15}
                 mapId="tractor-map"
                 disableDefaultUI={true}
                 gestureHandling={'greedy'}
               >
-                <AdvancedMarker position={position}>
-                  <div className="p-2 bg-primary rounded-full shadow-lg">
-                    <TractorIcon className="w-6 h-6 text-primary-foreground" />
-                  </div>
-                </AdvancedMarker>
+                {position && (
+                    <AdvancedMarker position={position}>
+                      <div className="p-2 bg-primary rounded-full shadow-lg">
+                        <TractorIcon className="w-6 h-6 text-primary-foreground" />
+                      </div>
+                    </AdvancedMarker>
+                )}
               </Map>
             </div>
           </APIProvider>

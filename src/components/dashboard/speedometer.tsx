@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Gauge } from "lucide-react";
 import {
   PolarAngleAxis,
@@ -18,20 +17,11 @@ import {
 
 const MAX_SPEED = 120;
 
-export default function Speedometer() {
-  const [speed, setSpeed] = useState(45);
+type SpeedometerProps = {
+  speed?: number;
+};
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSpeed((prev) => {
-        const change = Math.random() * 10 - 5;
-        const newSpeed = prev + change;
-        return Math.max(0, Math.min(MAX_SPEED, newSpeed));
-      });
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
-
+export default function Speedometer({ speed = 0 }: SpeedometerProps) {
   const chartData = [{ name: "speed", value: speed, fill: "var(--color-chart-1)" }];
 
   return (

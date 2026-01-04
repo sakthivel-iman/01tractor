@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Compass } from "lucide-react";
 
 import {
@@ -11,19 +10,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function GpsInfo() {
-  const [position, setPosition] = useState({ lat: 28.6139, lng: 77.2090 });
+type GpsInfoProps = {
+    position: { lat: number, lng: number } | null;
+}
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-        setPosition(prev => ({
-            lat: prev.lat + (Math.random() - 0.5) * 0.0001,
-            lng: prev.lng + (Math.random() - 0.5) * 0.0001,
-        }));
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
-  
+export default function GpsInfo({ position }: GpsInfoProps) {
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -35,7 +26,7 @@ export default function GpsInfo() {
       </CardHeader>
       <CardContent>
         <div className="text-lg font-medium tracking-tighter">
-            {position.lat.toFixed(6)}, {position.lng.toFixed(6)}
+            {position ? `${position.lat.toFixed(4)}, ${position.lng.toFixed(4)}` : "N/A"}
         </div>
       </CardContent>
     </Card>

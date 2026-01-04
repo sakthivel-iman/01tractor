@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Tractor } from "lucide-react";
+import { getAuth, signOut } from "firebase/auth";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -14,18 +15,25 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { TractorIcon } from "../icons";
+import { useUser } from "@/firebase";
 
 export function Header() {
   const router = useRouter();
+  const { user } = useUser();
+  const auth = getAuth();
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
+  const handleLogout = async () => {
+    await signOut(auth);
     router.push("/login");
   };
 
+  const goToProfile = () => {
+    router.push('/profile');
+  }
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-card px-4 sm:px-6">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push('/')}>
         <TractorIcon className="h-7 w-7 text-primary" />
         <h1 className="font-headline text-xl font-semibold tracking-tight">
           Tractor Status
@@ -36,7 +44,7 @@ export function Header() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-10 w-10 rounded-full">
               <Avatar className="h-10 w-10">
-                <AvatarImage src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="User" />
+                <AvatarImage src={user?.photoURL ?? undefined} alt={user?.displayName ?? "User"} />
                 <AvatarFallback>
                   <User />
                 </AvatarFallback>
@@ -44,10 +52,16 @@ export function Header() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{user?.email ?? 'My Account'}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem disabled>Profile</DropdownMenuItem>
-            <DropdownMenuItem disabled>Settings</DropdownMenuItem>
+            <DropdownMenuItem onClick={goToProfile} className="cursor-pointer">
+              <User className="mr-2 h-4 w-4" />
+              <span>Profile</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem disabled>
+                <Tractor className="mr-2 h-4 w-4" />
+                <span>My Tractor</span>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" />

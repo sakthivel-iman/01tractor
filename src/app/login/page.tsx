@@ -27,6 +27,12 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { TractorIcon } from "@/components/icons";
+import { useAuth, useUser } from "@/firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { FirebaseError } from "firebase/app";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -39,6 +45,8 @@ export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState(false);
+  const auth = useAuth();
+  const { user, isUserLoading } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,29 +56,68 @@ export default function LoginPage() {
     },
   });
 
+  React.useEffect(() => {
+    if (!isUserLoading && user) {
+      router.replace("/");
+    }
+  }, [user, isUserLoading, router]);
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (values.email === "admin@tractor.com" && values.password === "password123") {
-      localStorage.setItem("isAuthenticated", "true");
+    try {
+      await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({
         title: "Login Successful",
         description: "Redirecting to your dashboard...",
       });
       router.push("/");
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Login Failed",
-        description: "Invalid email or password. Use admin@tractor.com and password123 to log in.",
-      });
+    } catch (error) {
+      if (error instanceof FirebaseError && error.code === "auth/user-not-found") {
+        try {
+          await createUserWithEmailAndPassword(auth, values.email, values.password);
+          toast({
+            title: "Account Created",
+            description: "New account created successfully. Logging you in...",
+          });
+          router.push("/");
+        } catch (creationError) {
+          console.error("Account creation failed", creationError);
+          toast({
+            variant: "destructive",
+            title: "Registration Failed",
+            description:
+              creationError instanceof FirebaseError
+                ? creationError.message
+                : "An unexpected error occurred.",
+          });
+        }
+      } else {
+        console.error("Login failed", error);
+        toast({
+          variant: "destructive",
+          title: "Login Failed",
+          description:
+            error instanceof FirebaseError
+              ? error.message
+              : "Invalid credentials. Please try again.",
+        });
+      }
+    } finally {
       setIsLoading(false);
     }
   };
 
-  const tractorImage = PlaceHolderImages.find(p => p.id === 'tafe-7515-tractor');
+  const tractorImage = PlaceHolderImages.find(
+    (p) => p.id === "tafe-7515-tractor"
+  );
+  
+  if (isUserLoading || user) {
+    return (
+       <div className="h-screen w-screen flex justify-center items-center">
+         <TractorIcon className="w-24 h-24 animate-pulse text-primary" />
+       </div>
+    )
+  }
 
   return (
     <main className="relative h-screen w-screen overflow-hidden">
@@ -100,7 +147,10 @@ export default function LoginPage() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="email"
@@ -109,7 +159,7 @@ export default function LoginPage() {
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="admin@tractor.com"
+                          placeholder="your@email.com"
                           {...field}
                           disabled={isLoading}
                         />
@@ -127,7 +177,7 @@ export default function LoginPage() {
                       <FormControl>
                         <Input
                           type="password"
-                          placeholder="password123"
+                          placeholder="********"
                           {...field}
                           disabled={isLoading}
                         />
@@ -146,11 +196,11 @@ export default function LoginPage() {
               </form>
             </Form>
           </CardContent>
-          <CardFooter>
-            <p className="text-center text-xs text-muted-foreground w-full">
-              Use <code className="font-code p-1 bg-muted rounded-sm">admin@tractor.com</code> and <code className="font-code p-1 bg-muted rounded-sm">password123</code> to log in.
-            </p>
-          </CardFooter>
+           <CardFooter>
+             <p className="text-center text-xs text-muted-foreground w-full">
+              If you don't have an account, one will be created for you.
+             </p>
+           </CardFooter>
         </Card>
       </div>
     </main>

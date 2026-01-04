@@ -15,16 +15,7 @@ import {
   ChartTooltipContent,
   ChartConfig,
 } from "@/components/ui/chart";
-
-const chartData = [
-  { day: "Mon", hours: 8.5 },
-  { day: "Tue", hours: 9.2 },
-  { day: "Wed", hours: 7.8 },
-  { day: "Thu", hours: 10.1 },
-  { day: "Fri", hours: 9.5 },
-  { day: "Sat", hours: 11.3 },
-  { day: "Sun", hours: 4.2 },
-];
+import { useMemo } from "react";
 
 const chartConfig = {
   hours: {
@@ -33,7 +24,30 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function WorkingHoursChart() {
+type WorkingHoursChartProps = {
+  workingHours?: number;
+};
+
+export default function WorkingHoursChart({ workingHours = 0 }: WorkingHoursChartProps) {
+  const chartData = useMemo(() => {
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // Sunday - 0, Monday - 1, ...
+    const data = [
+      { day: "Sun", hours: 0 },
+      { day: "Mon", hours: 0 },
+      { day: "Tue", hours: 0 },
+      { day: "Wed", hours: 0 },
+      { day: "Thu", hours: 0 },
+      { day: "Fri", hours: 0 },
+      { day: "Sat", hours: 0 },
+    ];
+    // This is a mock for demonstration. A real app would fetch historical data.
+    data[dayOfWeek].hours = workingHours; 
+    return data;
+  }, [workingHours]);
+
+  const totalHours = chartData.reduce((acc, curr) => acc + curr.hours, 0);
+
   return (
     <Card>
       <CardHeader>
@@ -41,7 +55,7 @@ export default function WorkingHoursChart() {
           <Clock className="h-5 w-5" />
           Working Hours
         </CardTitle>
-        <CardDescription>Total operating hours this week.</CardDescription>
+        <CardDescription>Total operating hours this week: {totalHours.toFixed(1)}h</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-48 w-full">
@@ -52,7 +66,6 @@ export default function WorkingHoursChart() {
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
             />
              <YAxis
               tickLine={false}
