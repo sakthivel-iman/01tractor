@@ -80,7 +80,7 @@ export default function ProfilePage() {
                 <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="userName"><UserIcon className="inline-block mr-2 h-4 w-4" />User Name</Label>
-                    <Input id="userName" defaultValue={user.displayName || 'John Doe'} readOnly={!isEditing} />
+                    <Input id="userName" defaultValue={user.displayName || 'Admin User'} readOnly={!isEditing} />
                   </div>
                    <div className="space-y-2">
                     <Label htmlFor="email"><Mail className="inline-block mr-2 h-4 w-4" />Mail ID</Label>
@@ -88,7 +88,7 @@ export default function ProfilePage() {
                   </div>
                    <div className="space-y-2">
                     <Label htmlFor="phone"><Phone className="inline-block mr-2 h-4 w-4" />Phone No</Label>
-                    <Input id="phone" defaultValue="+1 234 567 890" readOnly={!isEditing} />
+                    <Input id="phone" defaultValue="+1 555-123-4567" readOnly={!isEditing} />
                   </div>
                 </CardContent>
               </Card>
@@ -112,11 +112,11 @@ export default function ProfilePage() {
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="engineNo"><Hash className="inline-block mr-2 h-4 w-4" />Engine No</Label>
-                            <Input id="engineNo" defaultValue="ENG987654321" readOnly={!isEditing} />
+                            <Input id="engineNo" defaultValue="TR-ENG-2023-04-1121" readOnly={!isEditing} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="chassisNo"><Hash className="inline-block mr-2 h-4 w-4" />Chassis No</Label>
-                            <Input id="chassisNo" defaultValue="CHS123456789" readOnly={!isEditing} />
+                            <Input id="chassisNo" defaultValue="TR-CH-2023-08-9876" readOnly={!isEditing} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="yom"><Calendar className="inline-block mr-2 h-4 w-4" />Year of Registration</Label>
@@ -124,7 +124,7 @@ export default function ProfilePage() {
                         </div>
                         <div className="space-y-2 md:col-span-2">
                             <Label htmlFor="address"><Home className="inline-block mr-2 h-4 w-4" />Address</Label>
-                            <Input id="address" defaultValue="123 Tractor Lane, Farmville, AG 54321" readOnly={!isEditing} />
+                            <Input id="address" defaultValue="Plot 42, Tractor Industrial Park, Farmville, AG 54321" readOnly={!isEditing} />
                         </div>
                     </div>
                      <div className="space-y-2">
