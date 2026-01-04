@@ -32,10 +32,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { errorEmitter } from "@/firebase/error-emitter";
 import { FirestorePermissionError } from "@/firebase/errors";
+import { useTractorData } from "@/hooks/use-tractor-data";
 
 export function Header() {
   const router = useRouter();
   const { user } = useUser();
+  const { latestData } = useTractorData();
   const auth = getAuth();
   const firestore = useFirestore();
   const { toast } = useToast();
@@ -50,14 +52,29 @@ export function Header() {
   };
 
   const handleSos = async () => {
-    if (!user) return;
+    if (!user || !latestData) {
+        toast({
+            variant: "destructive",
+            title: "SOS Failed",
+            description: "Could not send alert. Location data is unavailable.",
+        });
+        return;
+    }
+
+    const { latitude, longitude } = latestData;
+    const tractorName = "TAFE 7515"; // Placeholder, ideally this would come from user's profile data
+    const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+    
+    const message = `Your tractor: ${tractorName} is stuck in field. Location is: ${googleMapsLink}`;
+
     const sosData = {
       userId: user.uid,
       timestamp: serverTimestamp(),
       location: {
-        lat: 0, // Replace with actual location if available
-        lng: 0,
-      }
+        lat: latitude,
+        lng: longitude,
+      },
+      message: message,
     };
 
     try {
@@ -76,7 +93,7 @@ export function Header() {
 
       toast({
         title: "SOS Alert Sent",
-        description: "Your emergency alert has been sent to the ESP32 controller.",
+        description: "Your emergency alert has been sent.",
       });
     } catch (error) {
       console.error("Error sending SOS:", error);
@@ -113,7 +130,7 @@ export function Header() {
             <AlertDialogHeader>
               <AlertDialogTitle>Confirm SOS Alert</AlertDialogTitle>
               <AlertDialogDescription>
-                This will immediately send an emergency alert to your registered contacts via the ESP32 controller. Are you sure you want to proceed?
+                This will immediately send an emergency alert. Are you sure you want to proceed?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

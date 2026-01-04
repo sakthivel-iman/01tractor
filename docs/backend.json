@@ -73,9 +73,13 @@
             "lat": { "type": "number" },
             "lng": { "type": "number" }
           }
+        },
+        "message": {
+          "type": "string",
+          "description": "The SOS message content, including tractor name and a Google Maps link to the location."
         }
       },
-      "required": ["userId", "timestamp"]
+      "required": ["userId", "timestamp", "message"]
     }
   },
   "auth": {
