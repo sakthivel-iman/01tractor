@@ -1,22 +1,26 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, useAuth } from '@/firebase';
 import { Header } from '@/components/dashboard/header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { TractorIcon } from '@/components/icons';
-import { User as UserIcon, Mail, LogOut } from 'lucide-react';
+import { User as UserIcon, Mail, LogOut, Phone, Home, Edit, Save, Hash, Calendar } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function ProfilePage() {
   const router = useRouter();
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -29,23 +33,18 @@ export default function ProfilePage() {
     router.push('/login');
   };
 
+  const tractorImage = PlaceHolderImages.find((p) => p.id === 'tafe-7515-tractor');
+
   if (isUserLoading || !user) {
     return (
       <div className="flex h-screen w-full flex-col bg-background">
         <Header />
         <main className="flex flex-1 items-center justify-center p-4">
-          <Card className="w-full max-w-md">
-            <CardHeader className="items-center text-center">
-              <Skeleton className="h-24 w-24 rounded-full" />
-              <div className="space-y-2 mt-4">
-                <Skeleton className="h-6 w-40" />
-                <Skeleton className="h-4 w-48" />
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-               <Skeleton className="h-10 w-full" />
-            </CardContent>
-          </Card>
+            <div className="w-full max-w-4xl mx-auto space-y-8">
+                <Skeleton className="h-48 w-full" />
+                <Skeleton className="h-64 w-full" />
+                <Skeleton className="h-12 w-full" />
+            </div>
         </main>
       </div>
     );
@@ -56,42 +55,108 @@ export default function ProfilePage() {
       <Header />
       <main className="flex-1 bg-muted/20">
         <div className="container mx-auto py-8">
-            <Card className="w-full max-w-2xl mx-auto shadow-lg">
-                <CardHeader className="items-center text-center bg-card p-8">
-                    <Avatar className="h-24 w-24 mb-4 ring-4 ring-primary/20">
-                        <AvatarImage src={user.photoURL || undefined} alt={user.displayName || 'User'} />
-                        <AvatarFallback>
-                            <UserIcon className="h-12 w-12" />
-                        </AvatarFallback>
-                    </Avatar>
-                    <CardTitle className="text-3xl font-headline">{user.displayName || 'User Profile'}</CardTitle>
-                    <CardDescription className="flex items-center gap-2">
-                        <Mail className="h-4 w-4" /> {user.email}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="p-8">
-                    <div className="space-y-6">
-                         <div>
-                            <h3 className="font-semibold mb-2 text-lg">Your Tractor</h3>
-                            <div className="p-4 flex items-center gap-4 rounded-lg border bg-muted/50">
-                                <TractorIcon className="h-10 w-10 text-primary" />
-                                <div>
-                                    <p className="font-medium">TAFE 7515</p>
-                                    <p className="text-sm text-muted-foreground">ID: {user.uid.substring(0, 8)}</p>
-                                </div>
-                            </div>
-                        </div>
-                        
+            <div className="w-full max-w-4xl mx-auto space-y-8">
+
+              {/* User Profile Card */}
+              <Card className="shadow-lg">
+                <CardHeader className="flex flex-row items-center justify-between p-6">
+                    <div className="flex items-center gap-4">
+                        <Avatar className="h-20 w-20 ring-4 ring-primary/20">
+                            <AvatarImage src={user.photoURL || undefined} alt={user.displayName || 'User'} />
+                            <AvatarFallback>
+                                <UserIcon className="h-10 w-10" />
+                            </AvatarFallback>
+                        </Avatar>
                         <div>
-                             <h3 className="font-semibold mb-2 text-lg">Account Actions</h3>
-                             <Button onClick={handleLogout} variant="destructive" className="w-full">
-                                <LogOut className="mr-2 h-4 w-4" />
-                                Sign Out
-                            </Button>
+                            <CardTitle className="text-2xl font-headline">User Profile</CardTitle>
+                            <CardDescription>View and manage your personal information.</CardDescription>
                         </div>
                     </div>
+                     <Button onClick={() => setIsEditing(!isEditing)} size="icon" variant="ghost">
+                        {isEditing ? <Save className="h-5 w-5" /> : <Edit className="h-5 w-5" />}
+                        <span className="sr-only">{isEditing ? 'Save' : 'Edit'}</span>
+                    </Button>
+                </CardHeader>
+                <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="userName"><UserIcon className="inline-block mr-2 h-4 w-4" />User Name</Label>
+                    <Input id="userName" defaultValue={user.displayName || 'John Doe'} readOnly={!isEditing} />
+                  </div>
+                   <div className="space-y-2">
+                    <Label htmlFor="email"><Mail className="inline-block mr-2 h-4 w-4" />Mail ID</Label>
+                    <Input id="email" type="email" defaultValue={user.email || 'admin@tractor.com'} readOnly />
+                  </div>
+                   <div className="space-y-2">
+                    <Label htmlFor="phone"><Phone className="inline-block mr-2 h-4 w-4" />Phone No</Label>
+                    <Input id="phone" defaultValue="+1 234 567 890" readOnly={!isEditing} />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="address"><Home className="inline-block mr-2 h-4 w-4" />Address</Label>
+                    <Input id="address" defaultValue="123 Tractor Lane, Farmville, AG 54321" readOnly={!isEditing} />
+                  </div>
                 </CardContent>
-            </Card>
+              </Card>
+
+              {/* Tractor Information Card */}
+              <Card className="shadow-lg">
+                <CardHeader>
+                    <div className="flex items-center gap-4">
+                        <TractorIcon className="h-10 w-10 text-primary" />
+                        <div>
+                            <CardTitle className="text-2xl font-headline">My Tractor Information</CardTitle>
+                            <CardDescription>Details about your registered tractor.</CardDescription>
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="tractorName">Tractor Name</Label>
+                            <Input id="tractorName" defaultValue="TAFE 7515" readOnly={!isEditing} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="engineNo"><Hash className="inline-block mr-2 h-4 w-4" />Engine No</Label>
+                            <Input id="engineNo" defaultValue="ENG987654321" readOnly={!isEditing} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="chassisNo"><Hash className="inline-block mr-2 h-4 w-4" />Chassis No</Label>
+                            <Input id="chassisNo" defaultValue="CHS123456789" readOnly={!isEditing} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="yom"><Calendar className="inline-block mr-2 h-4 w-4" />Year of Registration</Label>
+                            <Input id="yom" defaultValue="2023" type="number" readOnly={!isEditing} />
+                        </div>
+                    </div>
+                     <div className="space-y-2">
+                        <Label>Tractor Image</Label>
+                        {tractorImage && (
+                            <div className="aspect-video w-full overflow-hidden rounded-lg border">
+                                <img
+                                    src={tractorImage.imageUrl}
+                                    alt={tractorImage.description}
+                                    className="h-full w-full object-cover"
+                                    data-ai-hint={tractorImage.imageHint}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </CardContent>
+              </Card>
+
+              {/* Account Actions */}
+              <Card className="shadow-lg">
+                <CardHeader>
+                    <CardTitle className="font-headline">Account Actions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Button onClick={handleLogout} variant="destructive" className="w-full md:w-auto">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign Out
+                    </Button>
+                </CardContent>
+              </Card>
+
+            </div>
         </div>
       </main>
     </div>
