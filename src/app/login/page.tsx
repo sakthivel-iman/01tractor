@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from "next/image";
@@ -34,6 +33,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -73,25 +73,29 @@ export default function LoginPage() {
     try {
       if (action === "signup") {
         await createUserWithEmailAndPassword(auth, values.email, values.password);
-        toast({
-          title: "Account Created",
-          description: "New account created successfully. Logging you in...",
-        });
       } else {
         await signInWithEmailAndPassword(auth, values.email, values.password);
-        toast({
-          title: "Login Successful",
-          description: "Redirecting to your dashboard...",
-        });
       }
-      router.push("/");
+      // The onAuthStateChanged listener in the provider will handle the redirect.
     } catch (error) {
       const firebaseError = error as FirebaseError;
       console.error(`${action} failed`, firebaseError);
+      
+      let description = "An unexpected error occurred.";
+      if (firebaseError.code === 'auth/wrong-password') {
+        description = 'Incorrect password. Please try again.';
+      } else if (firebaseError.code === 'auth/user-not-found') {
+        description = 'No account found with this email. Please sign up.';
+      } else if (firebaseError.code === 'auth/email-already-in-use') {
+        description = 'This email is already in use. Please sign in.';
+      } else if (firebaseError.message) {
+        description = firebaseError.message;
+      }
+
       toast({
         variant: "destructive",
-        title: `${action === "signup" ? "Registration" : "Login"} Failed`,
-        description: firebaseError.message || "An unexpected error occurred.",
+        title: `${action === "signup" ? "Sign Up" : "Sign In"} Failed`,
+        description,
       });
     } finally {
       setIsLoading(false);
@@ -104,7 +108,7 @@ export default function LoginPage() {
 
   if (isUserLoading || user) {
     return (
-      <div className="h-screen w-screen flex justify-center items-center">
+      <div className="h-screen w-screen flex justify-center items-center bg-background">
         <TractorIcon className="w-24 h-24 animate-pulse text-primary" />
       </div>
     );
@@ -122,9 +126,9 @@ export default function LoginPage() {
           data-ai-hint={tractorImage.imageHint}
         />
       )}
-      <div className="absolute inset-0 bg-primary/80 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-md" />
       <div className="relative z-10 flex h-full items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-2xl">
+        <Card className="w-full max-w-md shadow-2xl bg-card/80 backdrop-blur-lg">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
               <TractorIcon className="h-8 w-8" />
@@ -150,7 +154,7 @@ export default function LoginPage() {
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="your@email.com"
+                          placeholder="admin@tractor.com"
                           {...field}
                           disabled={isLoading}
                         />
@@ -177,21 +181,21 @@ export default function LoginPage() {
                     </FormItem>
                   )}
                 />
-                <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex flex-col sm:flex-row gap-2 pt-2">
                     <Button
-                    onClick={form.handleSubmit((values) => handleAuthAction("signin", values))}
-                    className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
-                    disabled={isLoading}
+                      onClick={form.handleSubmit((values) => handleAuthAction("signin", values))}
+                      className="w-full"
+                      disabled={isLoading}
                     >
-                    {isLoading ? "Signing In..." : "Sign In"}
+                      {isLoading ? <Loader2 className="animate-spin" /> : 'Sign In'}
                     </Button>
                     <Button
-                    onClick={form.handleSubmit((values) => handleAuthAction("signup", values))}
-                    variant="outline"
-                    className="w-full"
-                    disabled={isLoading}
+                      onClick={form.handleSubmit((values) => handleAuthAction("signup", values))}
+                      variant="secondary"
+                      className="w-full"
+                      disabled={isLoading}
                     >
-                    {isLoading ? "Working..." : "Sign Up"}
+                      {isLoading ? <Loader2 className="animate-spin" /> : 'Sign Up'}
                     </Button>
                 </div>
               </form>
@@ -199,7 +203,7 @@ export default function LoginPage() {
           </CardContent>
           <CardFooter>
             <p className="text-center text-xs text-muted-foreground w-full">
-              Sign in or create a new account to continue.
+              Use your credentials or create a new account.
             </p>
           </CardFooter>
         </Card>

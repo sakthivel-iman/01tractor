@@ -6,6 +6,7 @@ import {
   RadialBar,
   RadialBarChart,
   ResponsiveContainer,
+  PolarGrid,
 } from "recharts";
 import {
   Card,
@@ -22,33 +23,38 @@ type SpeedometerProps = {
 };
 
 export default function Speedometer({ speed = 0 }: SpeedometerProps) {
-  const chartData = [{ name: "speed", value: speed, fill: "var(--color-chart-1)" }];
+  const chartData = [{ name: "speed", value: speed, fill: "hsl(var(--primary))" }];
 
   return (
-    <Card>
+    <Card className="flex flex-col">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-headline text-xl">
+        <CardTitle className="flex items-center gap-2">
           <Gauge className="h-5 w-5" />
           Current Speed
         </CardTitle>
-        <CardDescription>Tractor's actual speed in real-time.</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="h-48 w-full relative">
+      <CardContent className="flex-grow flex items-center justify-center">
+        <div className="h-52 w-52 relative">
           <ResponsiveContainer width="100%" height="100%">
             <RadialBarChart
-              innerRadius="75%"
+              innerRadius="80%"
               outerRadius="100%"
               data={chartData}
-              startAngle={180}
-              endAngle={0}
-              barSize={20}
+              startAngle={210}
+              endAngle={-30}
+              barSize={18}
             >
               <PolarAngleAxis
                 type="number"
                 domain={[0, MAX_SPEED]}
                 angleAxisId={0}
                 tick={false}
+              />
+              <PolarGrid
+                gridType="circle"
+                radialLines={false}
+                polarRadius={[0]}
+                stroke="hsl(var(--border))"
               />
               <RadialBar
                 background={{ fill: "hsl(var(--muted))" }}
@@ -58,10 +64,10 @@ export default function Speedometer({ speed = 0 }: SpeedometerProps) {
             </RadialBarChart>
           </ResponsiveContainer>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="font-headline text-5xl font-bold tracking-tighter text-primary">
+            <span className="font-headline text-6xl font-bold tracking-tighter text-primary">
               {Math.round(speed)}
             </span>
-            <span className="text-muted-foreground font-medium">km/h</span>
+            <span className="text-muted-foreground font-medium -mt-1">km/h</span>
           </div>
         </div>
       </CardContent>

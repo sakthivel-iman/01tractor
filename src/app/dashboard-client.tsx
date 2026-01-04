@@ -14,6 +14,7 @@ import NetworkSignal from "@/components/dashboard/network-signal";
 import { useUser } from "@/firebase";
 import { useTractorData } from "@/hooks/use-tractor-data";
 import { TractorIcon } from "@/components/icons";
+import { Card } from "@/components/ui/card";
 
 export default function DashboardClient() {
   const router = useRouter();
@@ -34,54 +35,55 @@ export default function DashboardClient() {
     );
   }
 
-  if (isDataLoading) {
-    return (
-       <div className="flex min-h-screen w-full flex-col bg-background">
-        <Header />
-        <main className="flex-1 p-4 sm:p-6 md:p-8">
-            <div className="p-6 space-y-4 w-full max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    <Skeleton className="h-64 lg:col-span-1" />
-                    <Skeleton className="h-64 lg:col-span-1" />
-                    <Skeleton className="h-64 lg:col-span-1" />
-                </div>
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    <Skeleton className="h-80" />
-                    <Skeleton className="h-80" />
-                </div>
-            </div>
-        </main>
-      </div>
-    )
-  }
+  const renderSkeleton = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      <Skeleton className="h-64 xl:col-span-1 lg:col-span-2 md:col-span-2" />
+      <Skeleton className="h-64 xl:col-span-2 lg:col-span-2 md:col-span-2" />
+      <Skeleton className="h-64 xl:col-span-2 lg:col-span-2 md:col-span-2" />
+      <Skeleton className="h-80 xl:col-span-3 lg:col-span-4 md:col-span-2" />
+      <Skeleton className="h-80 xl:col-span-2 lg:col-span-4 md:col-span-2" />
+    </div>
+  );
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex-1 p-4 sm:p-6 md:p-8">
-        <div className="grid gap-6 md:gap-8 xl:grid-cols-3">
-          <div className="grid gap-6 md:gap-8 xl:col-span-2">
-            <div className="grid gap-6 md:grid-cols-2">
-              <Speedometer speed={latestData?.speedKmph} />
+        {isDataLoading ? renderSkeleton() : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            
+            {/* Speedometer */}
+            <div className="xl:col-span-1 lg:col-span-2 md:col-span-2">
+                <Speedometer speed={latestData?.speedKmph} />
+            </div>
+
+            {/* Working Hours */}
+            <div className="xl:col-span-2 lg:col-span-2 md:col-span-2">
               <WorkingHoursChart workingHours={latestData?.workingHours} />
             </div>
-             <div className="grid gap-6 md:grid-cols-2">
-                <CameraFeed />
-                <MapWidget position={latestData ? { lat: latestData.latitude, lng: latestData.longitude } : null} />
-             </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <WheelSlipCard wheel="Rear LH" slip={latestData?.wheelSlipRearLh} />
-              <WheelSlipCard wheel="Rear RH" slip={latestData?.wheelSlipRearRh} />
-              <GpsInfo position={latestData ? { lat: latestData.latitude, lng: latestData.longitude } : null} />
-              <NetworkSignal />
+            
+            {/* Camera and Slip */}
+            <div className="xl:col-span-2 lg:col-span-4 md:col-span-2 grid grid-cols-1 gap-6">
+               <CameraFeed />
+               <Card className="grid grid-cols-2 gap-6 p-4">
+                  <WheelSlipCard wheel="Rear LH" slip={latestData?.wheelSlipRearLh} />
+                  <WheelSlipCard wheel="Rear RH" slip={latestData?.wheelSlipRearRh} />
+               </Card>
             </div>
-          </div>
-          <div className="xl:col-span-1">
-            <div className="space-y-6">
-              {/* Other widgets can go here */}
+            
+            {/* Map */}
+            <div className="xl:col-span-3 lg:col-span-4 md:col-span-2">
+              <MapWidget position={latestData ? { lat: latestData.latitude, lng: latestData.longitude } : null} />
             </div>
+            
+            {/* GPS and Network */}
+            <div className="xl:col-span-2 lg:col-span-4 md:col-span-2 flex flex-col gap-6">
+               <GpsInfo position={latestData ? { lat: latestData.latitude, lng: latestData.longitude } : null} />
+               <NetworkSignal />
+            </div>
+
           </div>
-        </div>
+        )}
       </main>
     </div>
   );
