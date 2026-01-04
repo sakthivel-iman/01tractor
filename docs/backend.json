@@ -1,0 +1,86 @@
+{
+  "entities": {
+    "TractorTelemetry": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "TractorTelemetry",
+      "type": "object",
+      "description": "Represents telemetry data collected from the tractor's ESP32 controller.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the telemetry data record."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of when the telemetry data was recorded.",
+          "format": "date-time"
+        },
+        "speedKmph": {
+          "type": "number",
+          "description": "Tractor speed in kilometers per hour."
+        },
+        "wheelSlipRearRh": {
+          "type": "number",
+          "description": "Wheel slip percentage on the rear right wheel."
+        },
+        "wheelSlipRearLh": {
+          "type": "number",
+          "description": "Wheel slip percentage on the rear left wheel."
+        },
+        "workingHours": {
+          "type": "number",
+          "description": "Number of hours the tractor has been working."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "Latitude coordinate of the tractor's location."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude coordinate of the tractor's location."
+        }
+      },
+      "required": [
+        "id",
+        "timestamp",
+        "speedKmph",
+        "wheelSlipRearRh",
+        "wheelSlipRearLh",
+        "workingHours",
+        "latitude",
+        "longitude"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}/tractorTelemetry/{telemetryId}",
+        "definition": {
+          "entityName": "TractorTelemetry",
+          "schema": {
+            "$ref": "#/backend/entities/TractorTelemetry"
+          },
+          "description": "Stores telemetry data collected from the tractor's ESP32 controller. Each document represents a set of readings at a specific timestamp.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The ID of the user who owns the tractor and has access to the telemetry data."
+            },
+            {
+              "name": "telemetryId",
+              "description": "The unique ID of the tractor telemetry data document."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The data structure is designed to store telemetry data from ESP32-controlled tractors. Given the requirement of displaying real-time data and tracking tractor status, the structure prioritizes efficient querying and data retrieval for dashboard visualizations. To ensure authorization independence, we avoid hierarchical dependencies in security rules.\n\nThe core of the structure revolves around a top-level collection called `tractorTelemetry`. Each document in this collection represents a set of telemetry readings at a specific timestamp. Given the need to track individual tractors (although the request does not explicitly require multiple tractors), and to potentially implement user-based access control in the future, the `tractorTelemetry` collection is structured as a subcollection of a `users` collection. While not explicitly stated, it's reasonable to assume that access to a tractor's telemetry data might eventually need to be restricted to authorized users.\n\n**Authorization Independence:** Authorization is handled through the standard Firebase Authentication (`request.auth.uid`). Since this setup involves storing each tractors telemetry data as documents in a single top-level collection, authorization rules do not need to perform any `get()` calls to verify permissions based on parent documents. This ensures atomic operations and simplifies debugging. Since there's no collaborative aspect mentioned, the path-based ownership is enough.\n\n**QAPs (Rules are not Filters):** The design supports secure list operations (QAPs) because each telemetry data point is directly accessible within the `tractorTelemetry` collection. The security rules can efficiently filter based on `request.auth.uid` without requiring complex filtering logic within the rules themselves. If more complex role-based access control is needed in the future (e.g., different access levels for different users), a `members` map can be added to the document (denormalized from user profile). However, at its current state, it is not necessary."
+  }
+}
