@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { TractorIcon } from '@/components/icons';
-import { User as UserIcon, Mail, LogOut, Phone, Home, Edit, Save, Hash, Calendar } from 'lucide-react';
+import { User as UserIcon, Mail, LogOut, Phone, Home, Edit, Save, Hash, Calendar, ShieldAlert } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -89,6 +89,10 @@ export default function ProfilePage() {
                    <div className="space-y-2">
                     <Label htmlFor="phone"><Phone className="inline-block mr-2 h-4 w-4" />Phone No</Label>
                     <Input id="phone" defaultValue="" readOnly={!isEditing} />
+                  </div>
+                   <div className="space-y-2">
+                    <Label htmlFor="emergencyContact"><ShieldAlert className="inline-block mr-2 h-4 w-4 text-red-500" />Emergency Contact No</Label>
+                    <Input id="emergencyContact" defaultValue="" readOnly={!isEditing} />
                   </div>
                 </CardContent>
               </Card>

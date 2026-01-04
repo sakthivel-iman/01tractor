@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "TractorTelemetry": {
@@ -50,6 +51,31 @@
         "latitude",
         "longitude"
       ]
+    },
+    "SosAlert": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SosAlert",
+      "type": "object",
+      "description": "Represents an SOS alert triggered by a user.",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who triggered the alert."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of when the alert was triggered.",
+          "format": "date-time"
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "lat": { "type": "number" },
+            "lng": { "type": "number" }
+          }
+        }
+      },
+      "required": ["userId", "timestamp"]
     }
   },
   "auth": {
@@ -76,6 +102,26 @@
             {
               "name": "telemetryId",
               "description": "The unique ID of the tractor telemetry data document."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/sosAlerts/{alertId}",
+        "definition": {
+          "entityName": "SosAlert",
+          "schema": {
+            "$ref": "#/backend/entities/SosAlert"
+          },
+          "description": "Stores SOS alerts triggered by the user. The ESP32 controller should listen to this collection for new documents.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The ID of the user who triggered the alert."
+            },
+            {
+              "name": "alertId",
+              "description": "The unique ID of the SOS alert."
             }
           ]
         }

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect } from "react";
@@ -14,7 +15,7 @@ import NetworkSignal from "@/components/dashboard/network-signal";
 import { useUser } from "@/firebase";
 import { useTractorData } from "@/hooks/use-tractor-data";
 import { TractorIcon } from "@/components/icons";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function DashboardClient() {
   const router = useRouter();
@@ -36,12 +37,13 @@ export default function DashboardClient() {
   }
 
   const renderSkeleton = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-      <Skeleton className="h-64 xl:col-span-1 lg:col-span-2 md:col-span-2" />
-      <Skeleton className="h-64 xl:col-span-2 lg:col-span-2 md:col-span-2" />
-      <Skeleton className="h-64 xl:col-span-2 lg:col-span-2 md:col-span-2" />
-      <Skeleton className="h-80 xl:col-span-3 lg:col-span-4 md:col-span-2" />
-      <Skeleton className="h-80 xl:col-span-2 lg:col-span-4 md:col-span-2" />
+    <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {/* Skeletons for the new layout */}
+      <Skeleton className="h-48 lg:col-span-1 xl:col-span-1" />
+      <Skeleton className="h-96 lg:col-span-2 xl:col-span-2" />
+      <Skeleton className="h-64 lg:col-span-1 xl:col-span-1" />
+      <Skeleton className="h-64 lg:col-span-1 xl:col-span-1" />
+      <Skeleton className="h-64 lg:col-span-1 xl:col-span-1" />
     </div>
   );
 
@@ -49,39 +51,31 @@ export default function DashboardClient() {
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
       <main className="flex-1 p-4 sm:p-6 md:p-8">
-        {isDataLoading ? renderSkeleton() : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        {isDataLoading ? (
+          renderSkeleton()
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             
-            {/* Speedometer */}
-            <div className="xl:col-span-1 lg:col-span-2 md:col-span-2">
-                <Speedometer speed={latestData?.speedKmph} />
+            {/* Wheel Slip Cards */}
+            <div className="lg:col-span-1 xl:col-span-1 flex flex-col gap-6">
+                <WheelSlipCard wheel="Rear LH" slip={latestData?.wheelSlipRearLh} />
+                <WheelSlipCard wheel="Rear RH" slip={latestData?.wheelSlipRearRh} />
+            </div>
+            
+            {/* Camera and Map */}
+            <div className="lg:col-span-2 xl:col-span-2 grid grid-cols-1 gap-6">
+               <CameraFeed />
+               <MapWidget position={latestData ? { lat: latestData.latitude, lng: latestData.longitude } : null} />
             </div>
 
-            {/* Working Hours */}
-            <div className="xl:col-span-2 lg:col-span-2 md:col-span-2">
-              <WorkingHoursChart workingHours={latestData?.workingHours} />
-            </div>
-            
-            {/* Camera and Slip */}
-            <div className="xl:col-span-2 lg:col-span-4 md:col-span-2 grid grid-cols-1 gap-6">
-               <CameraFeed />
-               <Card className="grid grid-cols-2 gap-6 p-4">
-                  <WheelSlipCard wheel="Rear LH" slip={latestData?.wheelSlipRearLh} />
-                  <WheelSlipCard wheel="Rear RH" slip={latestData?.wheelSlipRearRh} />
-               </Card>
-            </div>
-            
-            {/* Map */}
-            <div className="xl:col-span-3 lg:col-span-4 md:col-span-2">
-              <MapWidget position={latestData ? { lat: latestData.latitude, lng: latestData.longitude } : null} />
-            </div>
-            
-            {/* GPS and Network */}
-            <div className="xl:col-span-2 lg:col-span-4 md:col-span-2 flex flex-col gap-6">
+            {/* Other Info */}
+            <div className="lg:col-span-3 xl:col-span-1 flex flex-col gap-6">
+               <Speedometer speed={latestData?.speedKmph} />
+               <WorkingHoursChart workingHours={latestData?.workingHours} />
                <GpsInfo position={latestData ? { lat: latestData.latitude, lng: latestData.longitude } : null} />
                <NetworkSignal />
             </div>
-
+            
           </div>
         )}
       </main>
